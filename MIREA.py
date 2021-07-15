@@ -1,10 +1,7 @@
 import requests
+import info
 from bs4 import BeautifulSoup
-#Файл, в котором через пробел записаны адреса сайтов, и на следующей строке ваш СНИЛС
-f = open('info.txt')
-urls= f.readline().split()
-snils = f.readline()
-f.close()
+
 def page_download(url):
     '''Берет url страницы и возвращает объект soup
     '''
@@ -45,7 +42,7 @@ def count_accepts(place, soup):
     count = filtered_accents[:place].count('да')
     return count
 
-def get_my_places(urls = urls, snils = snils):
+def get_my_places(urls = info.urls, snils = info.snils):
     '''Берет все указанные url и находит в каждом из них место указанного номера СНИЛС
     Возвращает строку с указанием направления и номера занятого места'''
     places = ''
