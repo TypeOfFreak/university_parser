@@ -48,7 +48,7 @@ def count_accepts(place, soup):
 def get_my_places(urls = urls, snils = snils):
     '''Берет все указанные url и находит в каждом из них место указанного номера СНИЛС
     Возвращает строку с указанием направления и номера занятого места'''
-    places = 'oops \n'
+    places = ''
     for url in urls:
         place = my_place(url,snils)
         places+= str(place[0]) +  '\n    Место:' + str(place[1]) + '\n    Согласий выше: '+ str(place[2]) + '\n'

@@ -13,6 +13,7 @@ async def start_answer(msg: types.Message):
 
 @dp.message_handler(commands=['rating'])
 async def start_answer(msg: types.Message):
-    await msg.reply(MIREA.get_my_places())
+    await msg.reply('Downloading...')
+    await bot.send_message(msg.from_user.id, MIREA.get_my_places())
 if __name__ == '__main__':
     executor.start_polling(dp)
