@@ -2,20 +2,21 @@ import requests
 import info
 from bs4 import BeautifulSoup
 
-def page_download(url):
+
+def get_page_soup(url):
     '''Берет url страницы и возвращает объект soup
     '''
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
     return soup
 
-def get_all_id(soup):
+def get_all_of_ids(soup):
     '''вытаскивает все СНИЛСы из таблицы и возвращает массив с ними'''
     ids = soup.findAll('td', class_= 'fio')
     filtered_ids = [data.text for data in ids]
     return filtered_ids
 
-def get_place(ids,snils):
+def get_my_place(ids, snils):
     ''' Принимает массив СНИЛСов и находит в нем место указанного номера СНИЛС.
     Если такого номера нет, то возвращает -1
     '''
@@ -23,20 +24,20 @@ def get_place(ids,snils):
         if ID == snils:
             return i
     return -1
-def get_name(soup):
+def get_direction_name(soup):
     '''Принимает объект soup и возвращает название направления'''
     name = soup.findAll('h1')[0].text.split('\n')[1]
     return name
 def my_place(url,snils):
-    '''Берет адрес страницы и искомы СНИЛС и возвращает его место в рейтинге
+    '''Берет адрес страницы и искомый СНИЛС и возвращает его место в рейтинге
     '''
-    soup = page_download(url)
-    ids = get_all_id(soup)
-    place = get_place(ids,snils)
-    name = get_name(soup)
-    return name[2:], place, count_accepts(place,soup)
+    soup = get_page_soup(url)
+    ids = get_all_of_ids(soup)
+    place = get_my_place(ids, snils)
+    name = get_direction_name(soup)
+    return name[2:], place, count_accepts_before_me(place, soup)
 
-def count_accepts(place, soup):
+def count_accepts_before_me(place, soup):
     accents = soup.findAll('td', class_ = 'accepted')
     filtered_accents = [data.text for data in accents]
     count = filtered_accents[:place].count('да')
