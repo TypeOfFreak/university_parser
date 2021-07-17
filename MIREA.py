@@ -24,18 +24,21 @@ def get_my_place(ids, snils):
         if ID == snils:
             return i
     return -1
+
 def get_direction_name(soup):
     '''Принимает объект soup и возвращает название направления'''
     name = soup.findAll('h1')[0].text.split('\n')[1]
+    print('ALERT')
     return name
+
 def my_place(url,snils):
     '''Берет адрес страницы и искомый СНИЛС и возвращает его место в рейтинге
     '''
     soup = get_page_soup(url)
     ids = get_all_of_ids(soup)
     place = get_my_place(ids, snils)
-    name = get_direction_name(soup)
-    return name[2:], place, count_accepts_before_me(place, soup)
+#    name = get_direction_name(soup)
+    return place, count_accepts_before_me(place, soup)
 
 def count_accepts_before_me(place, soup):
     accents = soup.findAll('td', class_ = 'accepted')
@@ -43,11 +46,13 @@ def count_accepts_before_me(place, soup):
     count = filtered_accents[:place].count('да')
     return count
 
-def get_my_places(urls = info.urls, snils = info.snils):
+def get_my_places(urls = info.urls, snils = info.snils, directions = info.directions):
     '''Берет все указанные url и находит в каждом из них место указанного номера СНИЛС
     Возвращает строку с указанием направления и номера занятого места'''
     places = ''
+    numdir = 0
     for url in urls:
         place = my_place(url,snils)
-        places+= str(place[0]) +  '\n    Место:' + str(place[1]) + '\n    Согласий выше: '+ str(place[2]) + '\n'
+        places+= str(directions[numdir]) +  '\n    Место:' + str(place[0]) + '\n    Согласий выше: '+ str(place[1]) + '\n'
+        numdir+=1
     return places
