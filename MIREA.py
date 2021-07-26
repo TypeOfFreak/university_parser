@@ -37,7 +37,7 @@ def my_place(url,snils):
     soup = get_page_soup(url)
     ids = get_all_of_ids(soup)
     place = get_my_place(ids, snils)
-#    name = get_direction_name(soup)
+#   name = get_direction_name(soup)
     return place, count_accepts_before_me(place, soup)
 
 def count_accepts_before_me(place, soup):
@@ -46,13 +46,13 @@ def count_accepts_before_me(place, soup):
     count = filtered_accents[:place].count('да')
     return count
 
-def get_my_places(urls = info.urls, snils = info.snils, directions = info.directions):
+def get_all_of_my_places(urls = info.urls, snils = info.my_snils_for_MIREA, directions = info.directions_of_MIREA):
     '''Берет все указанные url и находит в каждом из них место указанного номера СНИЛС
     Возвращает строку с указанием направления и номера занятого места'''
-    places = ''
+    return_my_places = ''
     numdir = 0
     for url in urls:
         place = my_place(url,snils)
-        places+= str(directions[numdir]) +  '\n    Место:' + str(place[0]) + '\n    Согласий выше: '+ str(place[1]) + '\n'
+        return_my_places+= str(directions[numdir]) +  '\n    Место:' + str(place[0]) + '\n    Согласий выше: '+ str(place[1]) + '\n'
         numdir+=1
-    return places
+    return return_my_places
