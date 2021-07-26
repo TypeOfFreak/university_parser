@@ -4,6 +4,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 import info
 import time
+from tqdm import tqdm
 
 def make_driver():
     options = Options()
@@ -67,7 +68,7 @@ def get_all_of_my_places(nums_of_down_clicks = info.num_of_down_clicks, my_snils
     driver = make_driver()
     numdir = 0
     choose_options(driver)
-    for num in nums_of_down_clicks:
+    for num in tqdm(nums_of_down_clicks):
         choose_the_option(driver, 'spec_select', num)
         time.sleep(.2)
         my_place, accepts_before_me = get_my_place_and_accepts_before_me(driver, my_snils)

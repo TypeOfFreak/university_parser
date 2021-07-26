@@ -1,6 +1,7 @@
 import requests
 import info
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 
 def get_page_soup(url):
@@ -51,9 +52,10 @@ def get_all_of_my_places(urls = info.urls, snils = info.my_snils_for_MIREA, dire
     Возвращает строку с указанием направления и номера занятого места'''
     return_my_places = ''
     numdir = 0
-    for url in urls:
+    for url in tqdm(urls):
         place = my_place(url,snils)
         return_my_places+= str(directions[numdir]) +  '\n    Место:' + str(place[0]) + '\n    Согласий выше: '+ str(place[1]) + '\n'
         numdir+=1
     return return_my_places
+
 print(get_all_of_my_places())
