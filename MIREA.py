@@ -56,3 +56,4 @@ def get_all_of_my_places(urls = info.urls, snils = info.my_snils_for_MIREA, dire
         return_my_places+= str(directions[numdir]) +  '\n    Место:' + str(place[0]) + '\n    Согласий выше: '+ str(place[1]) + '\n'
         numdir+=1
     return return_my_places
+print(get_all_of_my_places())
