@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 import info
 import time
 from tqdm import tqdm
+from bs4 import BeautifulSoup
 
 def make_driver():
     options = Options()
@@ -31,12 +32,8 @@ def choose_options(driver):
         time.sleep(.2)
         choose_the_option(driver, ids[i], num_of_down_clicks[i])
 
-def get_table(driver):
-    while True:
-        try:
-            table = driver.find_element_by_id('tab').find_elements_by_class_name('table')[-1]
-            return table
-        except: pass
+def get_table(soup):
+    return soup.findAll('table', class_='table')[-1]
 
 def get_my_place_by_snils_list(snils_list, my_snils):
     for i in range(len(snils_list)):
@@ -45,24 +42,31 @@ def get_my_place_by_snils_list(snils_list, my_snils):
     return -1
 
 def get_my_place_and_accepts_before_me(driver, my_snils):
-    table = get_table(driver)
-    snils_list = table.find_elements_by_tag_name('nobr')
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    table = get_table(soup)
+    snils_list = get_snils_list(table)
     my_place = get_my_place_by_snils_list(snils_list, my_snils)
 
-    accepts_before_me= count_accepts_before_me(table, my_place)
+    accepts_before_me = count_accepts_before_me(table, my_place)
 
     return str(my_place), str(accepts_before_me)
 
 def count_accepts_before_me(table,my_place):
-    lines = table.find_elements_by_tag_name('tr')
-    accepts = my_place
-    for row in lines[:my_place]:
-        if row.get_attribute('class') == 'notagree':
-            accepts -=1
+    lines = table.find_all('tr')[:my_place]
+    accepts = my_place-1
+    for i in range(1,len(lines)):
+        try:
+            if lines[i].attrs['class']==['notagree']:
+                accepts-=1
+        except: pass
     return accepts
 
 def get_number_of_budget_places(driver):
     return str(driver.find_element_by_id('tab').find_element_by_tag_name('span').text)
+
+
+def get_snils_list(table):
+    return table.find_all('nobr')
 
 def get_all_of_my_places(nums_of_down_clicks = info.num_of_down_clicks, my_snils = info.my_snils_for_MAI, directions = info.directions_of_MAI):
     return_my_places = ''
@@ -71,11 +75,11 @@ def get_all_of_my_places(nums_of_down_clicks = info.num_of_down_clicks, my_snils
     choose_options(driver)
     for num in tqdm(nums_of_down_clicks):
         choose_the_option(driver, 'spec_select', num)
-        time.sleep(.2)
+        time.sleep(.5)
+
         my_place, accepts_before_me = get_my_place_and_accepts_before_me(driver, my_snils)
         return_my_places += directions[numdir] + ' [Бюджетных мест:' + get_number_of_budget_places(driver) + ']\n   Место:' + my_place + '\n'+ '   Согласий выше:' + accepts_before_me + '\n'
         numdir+=1
-        print(str(numdir*25) + '%')
         time.sleep(.1)
     driver.quit()
     return return_my_places
