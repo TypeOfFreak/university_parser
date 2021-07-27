@@ -8,10 +8,8 @@ from tqdm import tqdm
 
 def make_driver():
     options = Options()
-    options.headless = False
-    exe_path = 'chromedriver_win32\chromedriver.exe'
-
-    driver = webdriver.Chrome(executable_path= exe_path, options=options)
+    options.headless = True
+    driver = webdriver.Chrome(executable_path= '/media/lucas/Staff/Projects/university_parser/chromedriver/chromedriver', options=options)
     driver.get('https://priem.mai.ru/rating/')
     return driver
 
@@ -57,11 +55,14 @@ def get_my_place_and_accepts_before_me(driver, my_snils):
 
 def count_accepts_before_me(table,my_place):
     lines = table.find_elements_by_tag_name('tr')
-    accepts = my_place-1
+    accepts = my_place
     for row in lines[:my_place]:
         if row.get_attribute('class') == 'notagree':
             accepts -=1
     return accepts
+
+def get_number_of_budget_places(driver):
+    return str(driver.find_element_by_id('tab').find_element_by_tag_name('span').text)
 
 def get_all_of_my_places(nums_of_down_clicks = info.num_of_down_clicks, my_snils = info.my_snils_for_MAI, directions = info.directions_of_MAI):
     return_my_places = ''
@@ -72,7 +73,7 @@ def get_all_of_my_places(nums_of_down_clicks = info.num_of_down_clicks, my_snils
         choose_the_option(driver, 'spec_select', num)
         time.sleep(.2)
         my_place, accepts_before_me = get_my_place_and_accepts_before_me(driver, my_snils)
-        return_my_places += directions[numdir] + '\n   Место:' + my_place + '\n'+ '   Согласий выше:' + accepts_before_me + '\n'
+        return_my_places += directions[numdir] + ' [Бюджетных мест:' + get_number_of_budget_places(driver) + ']\n   Место:' + my_place + '\n'+ '   Согласий выше:' + accepts_before_me + '\n'
         numdir+=1
         print(str(numdir*25) + '%')
         time.sleep(.1)
